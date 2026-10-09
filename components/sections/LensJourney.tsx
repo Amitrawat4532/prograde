@@ -16,16 +16,17 @@ const stages = [
 ] as const;
 
 /**
- * The signature 3D moment — desktop only. Phones, tablets, reduced motion and
- * no-WebGL skip it entirely (renders nothing), keeping the page short and light.
+ * The signature 3D moment. Desktop gets the full lens; phones and tablets a
+ * lite build (fewer polygons, DPR 1, no particles) over a shorter scroll.
+ * Reduced motion / no WebGL skip it entirely.
  */
 export function LensJourney() {
   const tier = useTier();
-  if (tier !== "full") return null;
-  return <Journey />;
+  if (tier === "off") return null;
+  return <Journey lite={tier === "lite"} />;
 }
 
-function Journey() {
+function Journey({ lite }: { lite: boolean }) {
   const section = useRef<HTMLElement>(null);
   const captions = useRef<(HTMLLIElement | null)[]>([]);
   const wash = useRef<HTMLDivElement>(null);
@@ -60,15 +61,15 @@ function Journey() {
   }, []);
 
   return (
-    <section ref={section} id="lens" aria-labelledby="lens-title" className="relative h-[280vh] bg-black">
+    <section ref={section} id="lens" aria-labelledby="lens-title" className="relative h-[230svh] bg-black lg:h-[280vh]">
       <div className="sticky top-0 h-svh overflow-hidden">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgb(217_164_91/0.10),transparent_70%)]"
         />
-        <div className="absolute inset-0">{near && <LensJourneyCanvas active={inView} lite={false} />}</div>
+        <div className="absolute inset-0">{near && <LensJourneyCanvas active={inView} lite={lite} />}</div>
 
-        <div className="absolute left-0 top-0 px-[var(--gutter)] pt-28">
+        <div className="absolute left-0 top-0 px-[var(--gutter)] pt-24 lg:pt-28">
           <p className="eyebrow mb-4">02 — Process</p>
           <h2 id="lens-title" className="display max-w-[12ch] text-[clamp(2rem,4.5vw,4rem)]">
             How an image <span className="serif italic normal-case tracking-normal text-ink-2">is made</span>
@@ -82,12 +83,12 @@ function Journey() {
               ref={(el) => {
                 captions.current[i] = el;
               }}
-              className="absolute bottom-[12vh] left-[var(--gutter)] max-w-md opacity-0"
+              className="absolute bottom-[10svh] left-[var(--gutter)] right-[var(--gutter)] max-w-md opacity-0 lg:bottom-[12vh] lg:right-auto"
             >
               <p className="meta mb-3 text-amber">
                 {s.n} / 04 — {s.title}
               </p>
-              <p className="text-[clamp(1.4rem,2.4vw,2.2rem)] font-medium leading-[1.15] tracking-[-0.02em]">{s.body}</p>
+              <p className="text-[clamp(1.25rem,5.6vw,2.2rem)] font-medium leading-[1.15] tracking-[-0.02em]">{s.body}</p>
             </li>
           ))}
         </ol>

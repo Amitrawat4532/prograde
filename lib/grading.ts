@@ -41,6 +41,19 @@ function buildCurves(g: Grade) {
   return curves;
 }
 
+/** Grades a single colour (0–1 channels) — used by the 3D LUT cube. */
+export function makeGrader(g: Grade) {
+  const [cr, cg, cb] = buildCurves(g);
+  const sat = g.saturation;
+  return (r: number, gr: number, b: number): RGB => {
+    const R = cr[Math.round(r * 255)];
+    const G = cg[Math.round(gr * 255)];
+    const B = cb[Math.round(b * 255)];
+    const l = R * 0.2126 + G * 0.7152 + B * 0.0722;
+    return [clamp(l + (R - l) * sat), clamp(l + (G - l) * sat), clamp(l + (B - l) * sat)];
+  };
+}
+
 export function applyGrade(src: ImageData, g: Grade): ImageData {
   const out = new ImageData(src.width, src.height);
   const s = src.data;

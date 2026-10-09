@@ -11,7 +11,7 @@ export function MobileDock() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const blockers = ["#luts", "#build", "#contact", "footer"].map((s) => document.querySelector(s)).filter(Boolean) as Element[];
+    const blockers = ["#lens", "#luts", "#build", "#contact", "footer"].map((s) => document.querySelector(s)).filter(Boolean) as Element[];
     const blocked = new Set<Element>();
     let pastHero = false;
     const update = () => setShow(pastHero && blocked.size === 0);

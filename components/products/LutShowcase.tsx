@@ -6,10 +6,16 @@ import { lutPacks } from "@/lib/content";
 import { formatPrice } from "@/lib/site";
 import { BeforeAfter } from "./BeforeAfter";
 import { BuyButton } from "./BuyButton";
+import { LutCube } from "./LutCube";
+import { lutSelection } from "@/lib/lutSelection";
 
 /** The featured comparator: pick a pack, drag the split, buy without scrolling. */
 export function LutShowcase() {
-  const [i, setI] = useState(0);
+  const [i, setI] = useState(lutSelection.get());
+  const select = (idx: number) => {
+    setI(idx);
+    lutSelection.set(idx); // drives the 3D LUT cube
+  };
   const pack = lutPacks[i];
 
   return (
@@ -33,7 +39,7 @@ export function LutShowcase() {
               key={p.slug}
               role="tab"
               aria-selected={idx === i}
-              onClick={() => setI(idx)}
+              onClick={() => select(idx)}
               className="meta flex h-11 shrink-0 items-center gap-2.5 border border-line px-3.5 text-ink-2 transition-colors hover:text-ink aria-selected:border-ink aria-selected:text-ink"
             >
               <span aria-hidden className="flex">
@@ -48,6 +54,7 @@ export function LutShowcase() {
       </div>
 
       <div className="flex flex-col justify-between gap-6 lg:border-l lg:border-line lg:pl-10">
+        <LutCube className="aspect-[16/10] w-full lg:aspect-square" />
         <div>
           <p className="meta text-amber">{pack.count} LUTs — .cube · LOG + Rec.709</p>
           <h3 className="mt-3 text-[clamp(2rem,3.4vw,3.2rem)] font-semibold uppercase leading-[0.95] tracking-[-0.035em]">{pack.name}</h3>
